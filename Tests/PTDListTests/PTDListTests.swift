@@ -6,10 +6,16 @@ final class PTDListTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(PTDList().text, "Hello, World!")
+        XCTAssertEqual(PTDList<String, UICollectionViewListCell>(items: []).items, [])
     }
 
     static var allTests = [
         ("testExample", testExample),
     ]
+}
+
+extension UICollectionViewListCell: PTDListCell {
+    public func setup(item: AnyHashable, indexPath: IndexPath) {
+        
+    }
 }
