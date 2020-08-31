@@ -2,7 +2,7 @@ import UIKit
 
 open class PTDList<Item: Hashable, Cell: PTDListCell>: UICollectionView {
     
-    open var items: [Item]
+    open var items: [Item] { didSet { apply() } }
     
     public lazy var diffableDataSource = makeDataSource()
     

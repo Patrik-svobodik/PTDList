@@ -1,11 +1,16 @@
 import UIKit
 
-class PTDListController<Item: Hashable, Cell: PTDListCell>: UIViewController {
+open class PTDListController<Item: Hashable, Cell: PTDListCell>: UIViewController {
     private var list: PTDList<Item, Cell>!
     
-    var items = [Item]()
+    open var items = [Item]() {
+        didSet {
+            guard let list = list else { return }
+            list.items = items
+        }
+    }
     
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         list = PTDList(items: items)
         view.addSubview(list)
         list.translatesAutoresizingMaskIntoConstraints = false
