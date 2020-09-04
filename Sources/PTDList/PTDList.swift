@@ -12,6 +12,7 @@ open class PTDList<Item: Hashable, Cell: PTDListCell>: UICollectionView {
         let list = UICollectionViewCompositionalLayout.list(using: config)
         super.init(frame: .zero, collectionViewLayout: list)
         self.dataSource = diffableDataSource
+        apply()
     }
     
     public required init?(coder: NSCoder) {

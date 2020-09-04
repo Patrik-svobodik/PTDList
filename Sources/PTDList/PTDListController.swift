@@ -1,7 +1,7 @@
 import UIKit
 
 open class PTDListController<Item: Hashable, Cell: PTDListCell>: UIViewController {
-    private var list: PTDList<Item, Cell>!
+    open var list: PTDList<Item, Cell>!
     
     open var items = [Item]() {
         didSet {
@@ -21,5 +21,6 @@ open class PTDListController<Item: Hashable, Cell: PTDListCell>: UIViewControlle
             list.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             list.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        list.items = items
     }
 }
