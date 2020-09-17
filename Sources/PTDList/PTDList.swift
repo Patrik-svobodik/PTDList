@@ -56,7 +56,7 @@ open class PTDList<Cell: PTDListCell>: UICollectionView, UICollectionViewDelegat
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         guard let item = diffableDataSource.itemIdentifier(for: indexPath) else { return }
-        self.action?(PTDListContext(indexPath: indexPath, item: item, list: self, controller: listController))
+        action?(PTDListContext(indexPath: indexPath, item: item, list: self, controller: listController))
     }
 }
 

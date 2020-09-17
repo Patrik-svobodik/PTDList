@@ -1,24 +1,21 @@
 import UIKit
 
 open class PTDListController<Cell: PTDListCell>: UIViewController {
-    open var list: PTDList<Cell>!
+    open lazy var list = PTDList<Cell>(items: items)
     
     open var action: ((PTDListContext<Cell>) -> ())? {
         didSet {
-            guard let list = list else { return }
             list.action = action
         }
     }
     
     open var items = [Cell.Item]() {
         didSet {
-            guard let list = list else { return }
             list.items = items
         }
     }
     
     open override func viewDidLoad() {
-        list = PTDList(items: items)
         list.listController = self
         view.addSubview(list)
         list.translatesAutoresizingMaskIntoConstraints = false
