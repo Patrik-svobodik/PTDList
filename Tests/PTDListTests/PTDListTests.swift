@@ -1,21 +1,41 @@
 import XCTest
 @testable import PTDList
+import UIKit
 
 final class PTDListTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(PTDList<String, UICollectionViewListCell>(items: []).items, [])
+    func testDataSource() {
+        let list = PTDList<PTDListTestCell>(items: ["What lol"])
+        XCTAssertEqual(list.dataSource?.collectionView(list, numberOfItemsInSection: 0), 1)
+    }
+    func testCell() {
+        let validTitle = "Ree"
+        let indexPath = IndexPath(item: 0, section: 0)
+        
+        let cell = PTDListTestCell()
+        cell.setup(context: .init(indexPath: indexPath, item: validTitle, list: .init(items: []), controller: nil))
+        XCTAssertEqual(cell.text, validTitle)
+        XCTAssertEqual(cell.secondaryText, "\(indexPath)")
+    }
+    func testTap() {
+        let list = PTDList<PTDListTestCell>(items: ["What lol"])
+        var success = false
+        list.action = { _ in success = true }
+        list.delegate?.collectionView?(list, didSelectItemAt: IndexPath(row: 0, section: 0))
+        XCTAssertTrue(success)
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("test dataSource", testDataSource),
+        ("test cell setup", testCell)
     ]
 }
 
-extension UICollectionViewListCell: PTDListCell {
-    public func setup(item: AnyHashable, indexPath: IndexPath) {
-        
+final class PTDListTestCell: UICollectionViewListCell, PTDListCell {
+    typealias Item = String
+    var text: String?
+    var secondaryText: String?
+    func setup(context: PTDListContext<PTDListTestCell>) {
+        text = context.item
+        secondaryText = "\(context.indexPath)"
     }
 }

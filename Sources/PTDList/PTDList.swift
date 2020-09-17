@@ -1,17 +1,22 @@
 import UIKit
 
-open class PTDList<Item: Hashable, Cell: PTDListCell>: UICollectionView {
+open class PTDList<Cell: PTDListCell>: UICollectionView, UICollectionViewDelegate {
     
-    open var items: [Item] { didSet { apply() } }
+    open var items: [Cell.Item] { didSet { apply() } }
+    
+    open var action: ((PTDListContext<Cell>) -> ())?
     
     public lazy var diffableDataSource = makeDataSource()
     
-    init(items: [Item]) {
+    open weak var listController: PTDListController<Cell>?
+    
+    public init(items: [Cell.Item]) {
         self.items = items
         let config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
         let list = UICollectionViewCompositionalLayout.list(using: config)
         super.init(frame: .zero, collectionViewLayout: list)
         self.dataSource = diffableDataSource
+        self.delegate = self
         apply()
     }
     
@@ -35,18 +40,34 @@ open class PTDList<Item: Hashable, Cell: PTDListCell>: UICollectionView {
         diffableDataSource.apply(snapshot)
     }
     
-    public typealias DataSource = UICollectionViewDiffableDataSource<Section, Item>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
+    public typealias DataSource = UICollectionViewDiffableDataSource<Section, Cell.Item>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Cell.Item>
     
     public enum Section: Hashable {
         case only
     }
     
-    let cell = UICollectionView.CellRegistration<Cell, Item> { (cell, indexPath, item) in
-        cell.setup(item: item, indexPath: indexPath)
+    lazy var cell = UICollectionView.CellRegistration<Cell, Cell.Item> { [weak self] (cell, indexPath, item) in
+        guard let self = self else { return }
+        var context = PTDListContext(indexPath: indexPath, item: item, list: self, controller: self.listController)
+        cell.setup(context: context)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let item = diffableDataSource.itemIdentifier(for: indexPath) else { return }
+        self.action?(PTDListContext(indexPath: indexPath, item: item, list: self, controller: listController))
     }
 }
 
 public protocol PTDListCell: UICollectionViewCell {
-    func setup(item: AnyHashable, indexPath: IndexPath)
+    associatedtype Item: Hashable
+    func setup(context: PTDListContext<Self>)
+}
+
+public struct PTDListContext<Cell: PTDListCell> {
+    public var indexPath: IndexPath
+    public var item: Cell.Item
+    public var list: PTDList<Cell>
+    public weak var controller: PTDListController<Cell>?
 }

@@ -21,8 +21,6 @@ let package = Package(
         .target(
             name: "PTDList",
             dependencies: []),
-        .testTarget(
-            name: "PTDListTests",
-            dependencies: ["PTDList"]),
+        .testTarget(name: "PTDListTests", dependencies: ["PTDList"]),
     ]
 )
