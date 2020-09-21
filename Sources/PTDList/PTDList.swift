@@ -12,7 +12,11 @@ open class PTDList<Cell: PTDListCell>: UICollectionView, UICollectionViewDelegat
     
     public init(items: [Cell.Item]) {
         self.items = items
+        #if os(tvOS)
+        let config = UICollectionLayoutListConfiguration(appearance: .grouped)
+        #else
         let config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+        #endif
         let list = UICollectionViewCompositionalLayout.list(using: config)
         super.init(frame: .zero, collectionViewLayout: list)
         self.dataSource = diffableDataSource
@@ -21,7 +25,7 @@ open class PTDList<Cell: PTDListCell>: UICollectionView, UICollectionViewDelegat
     }
     
     public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) has not been implemented, PTDList isn't ready for Storyboard usage.")
     }
     
     private func makeDataSource() -> DataSource {
