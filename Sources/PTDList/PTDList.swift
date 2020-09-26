@@ -21,6 +21,7 @@ open class PTDList<Cell: PTDListCell>: UICollectionView, UICollectionViewDelegat
         super.init(frame: .zero, collectionViewLayout: list)
         self.dataSource = diffableDataSource
         self.delegate = self
+        self.backgroundColor = .systemBackground
         apply()
     }
     
